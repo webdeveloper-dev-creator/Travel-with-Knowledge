@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel with Knowledge</title>
+    <style>
+        body {
+            background-image: url('360.jpg');
+            background-size: cover;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .form-container {
+            display: block;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            width: 320px;
+            margin: 100px auto;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .hidden { display: none; }
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover { background: #0056b3; }
+        a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        a:hover { text-decoration: underline; }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        th { padding: 15px; }
+        .content { padding: 20px; }
+        @media (max-width: 600px) { .form-container { width: 90%; } }
+    </style>
+</head>
+<body>
+
+<div id="register-form" class="form-container">
+    <h2>Register</h2>
+    <input type="text" id="reg-username" placeholder="Enter Username">
+    <input type="password" id="reg-password" placeholder="Enter Password">
+    <input type="email" id="reg-email" placeholder="Enter Email">
+    <input type="tel" id="reg-mobile" placeholder="Enter Mobile Number">
+    <input type="date" id="reg-dob">
+    <button onclick="register()">Register</button>
+    <p>Already registered? <a onclick="showLogin()">Login here</a></p>
+</div>
+
+<div id="login-form" class="form-container hidden">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Enter Username">
+    <input type="password" id="login-password" placeholder="Enter Password">
+    <button onclick="login()">Login</button>
+    <p>New user? <a onclick="showRegister()">Register here</a></p>
+</div>
+
+<table id="home" class="hidden">
+    <tr>
+        <th>Travel with Knowledge</th>
+        <th><a onclick="showHome()">Home</a></th>
+        <th><a onclick="showVisit()">Visit</a></th>
+        <th><a onclick="showAbout()">About Us</a></th>
+        <th><a onclick="logout()">Logout</a></th>
+    </tr>
+</table>
+
+<div id="home-content" class="form-container hidden">
+    <h1>Welcome to Travel with Knowledge</h1>
+    <h3 style="color: #007BFF;">Visit Now</h3>
+    <p>Thanks for visiting</p>
+</div>
+
+<div id="visit" class="form-container hidden">
+    <h1>Top Travel Destinations</h1>
+    <select id="country-select" onchange="showCountryInfo()">
+        <option value="india">India</option>
+        <option value="france">France</option>
+        <option value="japan">Japan</option>
+        <option value="australia">Australia</option>
+    </select>
+    <div id="country-info">
+        <h2 id="country-name">India</h2>
+        <p id="country-description">Explore India's diverse culture and heritage.</p>
+        <a id="country-link" href="https://en.wikipedia.org/wiki/India" target="_blank">Learn More</a>
+    </div>
+    <a onclick="showHome()">← Back to Home</a>
+</div>
+
+<div id="about" class="form-container hidden">
+    <h1>About Us</h1>
+    <p><strong>Website Creators:</strong> Devendra Patil , Nikhil Sarode & Prathmesh Sasane</p>
+    <p>Traveling expands knowledge, helps us understand different cultures, and creates lifelong memories.</p>
+    <a onclick="showHome()">← Back to Home</a>
+</div>
+
+<script>
+    function register() {
+        let username = document.getElementById("reg-username").value.trim();
+        let password = document.getElementById("reg-password").value.trim();
+        let email = document.getElementById("reg-email").value.trim();
+        let mobile = document.getElementById("reg-mobile").value.trim();
+        let dob = document.getElementById("reg-dob").value;
+
+        if (!username || !password || !email || !mobile || !dob) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("users")) || {};
+        if (users[username]) {
+            alert("Username already exists! Please choose another.");
+        } else {
+            users[username] = {
+                password: password,
+                email: email,
+                mobile: mobile,
+                dob: dob
+            };
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("Registration successful! Please login.");
+            showLogin();
+        }
+    }
+
+    function login() {
+        let username = document.getElementById("login-username").value.trim();
+        let password = document.getElementById("login-password").value.trim();
+        let users = JSON.parse(localStorage.getItem("users")) || {};
+        if (users[username] && users[username].password === password) {
+            localStorage.setItem("loggedInUser", username);
+            document.getElementById("register-form").classList.add("hidden");
+            document.getElementById("login-form").classList.add("hidden");
+            document.getElementById("home").classList.remove("hidden");
+            document.getElementById("home-content").classList.remove("hidden");
+        } else {
+            alert("Invalid Username or Password!");
+        }
+    }
+
+    function showRegister() {
+        document.getElementById("register-form").classList.remove("hidden");
+        document.getElementById("login-form").classList.add("hidden");
+    }
+
+    function showLogin() {
+        document.getElementById("register-form").classList.add("hidden");
+        document.getElementById("login-form").classList.remove("hidden");
+    }
+
+    function toggleSection(sectionId) {
+        document.querySelectorAll('.form-container, table').forEach(element => {
+            element.classList.add('hidden');
+        });
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    function logout() {
+        localStorage.removeItem("loggedInUser");
+        document.querySelectorAll('.form-container, table').forEach(element => {
+            element.classList.add('hidden');
+        });
+        document.getElementById('register-form').classList.remove('hidden');
+    }
+
+    function showHome() {
+        toggleSection('home-content');
+        document.getElementById('home').classList.remove('hidden');
+    }
+
+    function showVisit() {
+        toggleSection('visit');
+        document.getElementById('home').classList.remove('hidden');
+    }
+
+    function showAbout() {
+        toggleSection('about');
+        document.getElementById('home').classList.remove('hidden');
+    }
+
+    function showCountryInfo() {
+        let country = document.getElementById("country-select").value;
+        let countryName = document.getElementById("country-name");
+        let countryDescription = document.getElementById("country-description");
+        let countryLink = document.getElementById("country-link");
+
+        switch (country) {
+            case "india":
+                countryName.textContent = "India";
+                countryDescription.textContent = "Explore India's diverse culture and heritage.";
+                countryLink.href = "https://en.wikipedia.org/wiki/India";
+                break;
+            case "france":
+                countryName.textContent = "France";
+                countryDescription.textContent = "Discover the romance and history of France.";
+                countryLink.href = "https://en.wikipedia.org/wiki/France";
+                break;
+            case "japan":
+                countryName.textContent = "Japan";
+                countryDescription.textContent = "Experience the unique blend of tradition and modernity in Japan.";
+                countryLink.href = "https://en.wikipedia.org/wiki/Japan";
+                break;
+            case "australia":
+                countryName.textContent = "Australia";
+                countryDescription.textContent = "Explore the vast landscapes and wildlife of Australia.";
+                countryLink.href = "https://en.wikipedia.org/wiki/Australia";
+                break;
+        }
+    }
+</script>
+
+</body>
+</html>
